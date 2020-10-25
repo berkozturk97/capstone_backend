@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 module.exports = () => {
-    mongoose.connect('mongodb+srv://seckinbrke:seckinbrke123@cluster0.yvtox.mongodb.net/Filterfy?retryWrites=true&w=majority', {
+    mongoose.connect(' mongodb+srv://seckinbrke:seckinbrke123@smartlock.zhsvp.mongodb.net/SmartLock?retryWrites=true&w=majority', {
+       
         useCreateIndex: true,
         useNewUrlParser: true,
         useUnifiedTopology: true,

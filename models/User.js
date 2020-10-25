@@ -14,6 +14,10 @@ const UserPackageSchema = new Schema({
         type: String,
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
+    rfid: {
+        type: String,
+        required: [true, '`{PATH}` alanı zorunludur.'],
+    },
     permissions: {
         type: Array,
         required: [true, '`{PATH}` alanı zorunludur.'],
