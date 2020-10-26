@@ -40,6 +40,7 @@ router.post('/hasPermisson', async (req, res) => {
     console.log(hasId);
     const log = new Log({
         rfid: rfid,
+        doorid: doorid,
         isOpen: hasId
     })
     log.save().then((data) => {
