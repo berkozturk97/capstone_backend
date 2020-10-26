@@ -53,6 +53,27 @@ router.post('/hasPermisson', async (req, res) => {
 
 })
 
+router.get('/hasPermisson/:rfid/:doorid', async (req, res) => {
+    const { rfid, doorid } = req.params;
+    const user = await UserPackage.find({ rfid: rfid });
+    const userPermission = user[0].permissions;
+    let hasId = await userPermission.includes(doorid);
+    console.log(hasId);
+    const log = new Log({
+        rfid: rfid,
+        doorid: doorid,
+        user: user[0],
+        isOpen: hasId
+    })
+    log.save().then((data) => {
+        //res.send({ hasId })
+        res.json(hasId)
+    }).catch((err) => {
+        res.json(err)
+    });
+
+})
+
 router.post('/getUsersByName', (req, res) => {
     const { fullName } = req.body;
     Products.find({ name: { $options: 'i', $regex: fullName } }).then((data) => {
@@ -80,6 +101,7 @@ router.get('/getUsers', (req, res) => {
 
 router.get('/getLog', (req, res) => {
     Log.find().then((data) => {
+        console.log(data)
         res.json(data);
     }).catch((err) => {
         res.json(err)
