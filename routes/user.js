@@ -67,7 +67,9 @@ router.get('/hasPermisson/:rfid/:doorid', async (req, res) => {
     })
     log.save().then((data) => {
         //res.send({ hasId })
-        res.json(hasId)
+        res.json({
+            "hasId": hasid
+        })
     }).catch((err) => {
         res.json(err)
     });
