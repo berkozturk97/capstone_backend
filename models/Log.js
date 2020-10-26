@@ -10,6 +10,10 @@ const LogSchema = new Schema({
         type: String,
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
+    user:{
+        type: Object,
+        required: [true, '`{PATH}` alanı zorunludur.'],
+    },
     isOpen: {
         type: Boolean,
         required: [true, '`{PATH}` alanı zorunludur.'],

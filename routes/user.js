@@ -41,6 +41,7 @@ router.post('/hasPermisson', async (req, res) => {
     const log = new Log({
         rfid: rfid,
         doorid: doorid,
+        user: user[0],
         isOpen: hasId
     })
     log.save().then((data) => {
@@ -71,6 +72,14 @@ router.get('/getAllDoor', (req, res) => {
 
 router.get('/getUsers', (req, res) => {
     UserPackage.find().then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        res.json(err)
+    })
+})
+
+router.get('/getLog', (req, res) => {
+    Log.find().then((data) => {
         res.json(data);
     }).catch((err) => {
         res.json(err)
