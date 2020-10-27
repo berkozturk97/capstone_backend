@@ -6,6 +6,10 @@ const DoorSchema = new Schema({
         type: String,
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
+    doorId:{
+        type: String,
+        required: [true, '`{PATH}` alanı zorunludur.'],
+    }
 }, {
     timestamps: true
 });

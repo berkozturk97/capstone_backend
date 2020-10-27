@@ -4,7 +4,6 @@ const Log = require('../models/Log');
 var router = express.Router();
 
 const UserPackage = require('../models/User');
-const Door = require('../models/Door');
 
 router.post('/addUser', (req, res) => {
     const { fullName, email, rfid, password, permissions } = req.body;
@@ -33,20 +32,19 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/hasPermisson', async (req, res) => {
-    const { rfid, doorid } = req.body;
-    const user = await UserPackage.find({ rfid: rfid });
-    const userPermission = user[0].permissions;
-    let hasId = await userPermission.includes(doorid);
-    console.log(hasId);
+    const { rfid, doorId } = req.body;
+    const user = await UserPackage.find({ rfid: rfid }).select("_id permissions fullName email rfid");
+    let isCanOpen = await user[0].permissions.includes(doorId);
+
     const log = new Log({
         rfid: rfid,
-        doorid: doorid,
+        doorId: doorId,
         user: user[0],
-        isOpen: hasId
+        isOpen: isCanOpen
     })
     log.save().then((data) => {
         //res.send({ hasId })
-        res.json(hasId)
+        res.json(isCanOpen)
     }).catch((err) => {
         res.json(err)
     });
@@ -54,20 +52,19 @@ router.post('/hasPermisson', async (req, res) => {
 })
 
 router.get('/hasPermisson/:rfid/:doorid', async (req, res) => {
-    const { rfid, doorid } = req.params;
+    const { rfid, doorId } = req.params;
     const user = await UserPackage.find({ rfid: rfid });
-    const userPermission = user[0].permissions;
-    let hasId = await userPermission.includes(doorid);
-    console.log(hasId);
+    let isCanOpen = await user[0].permissions.includes(doorId);
+
     const log = new Log({
         rfid: rfid,
-        doorid: doorid,
+        doorId: doorId,
         user: user[0],
-        isOpen: hasId
+        isOpen: isCanOpen
     })
     log.save().then((data) => {
         //res.send({ hasId })
-        res.send(hasId)
+        res.send(isCanOpen)
     }).catch((err) => {
         res.json(err)
     });
@@ -83,13 +80,6 @@ router.post('/getUsersByName', (req, res) => {
     })
 })
 
-router.get('/getAllDoor', (req, res) => {
-    Door.find().then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.json(err)
-    })
-})
 
 router.get('/getUsers', (req, res) => {
     UserPackage.find().then((data) => {
@@ -99,14 +89,6 @@ router.get('/getUsers', (req, res) => {
     })
 })
 
-router.get('/getLog', (req, res) => {
-    Log.find().then((data) => {
-        console.log(data)
-        res.json(data);
-    }).catch((err) => {
-        res.json(err)
-    })
-})
 
 router.put('/updateUserInfo/:id', (req, res) => {
     //

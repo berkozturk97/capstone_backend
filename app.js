@@ -8,6 +8,8 @@ var indexRouter = require('./routes/index');
 
 
 var userRouter = require('./routes/user')
+var doorRouter = require('./routes/door')
+var logRouter = require('./routes/log')
 
 var app = express();
 const db = require('./helper/db')();
@@ -25,6 +27,8 @@ app.use(cors())
 app.use('/', indexRouter);
 
 app.use('/userPackage', userRouter);
+app.use('/door', doorRouter);
+app.use('/log', logRouter);
 
 
 

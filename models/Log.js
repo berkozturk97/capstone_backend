@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Door = require('./Door');
 const Schema = mongoose.Schema;
 
 const LogSchema = new Schema({
@@ -6,11 +7,11 @@ const LogSchema = new Schema({
         type: String,
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
-    doorid: {
-        type: String,
-        required: [true, '`{PATH}` alanı zorunludur.'],
+    doorId: {
+        type: Schema.ObjectId,
+        ref: Door
     },
-    user:{
+    user: {
         type: Object,
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
