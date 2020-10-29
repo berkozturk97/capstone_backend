@@ -50,10 +50,10 @@ router.post('/hasPermisson', async (req, res) => {
     });
 
 })
-
-router.get('/hasPermisson/:rfid/:doorid', async (req, res) => {
+router.get('/hasPermisson/:rfid/:doorId', async (req, res) => {
     const { rfid, doorId } = req.params;
     const user = await UserPackage.find({ rfid: rfid });
+    console.log(user[0])
     let isCanOpen = await user[0].permissions.includes(doorId);
 
     const log = new Log({

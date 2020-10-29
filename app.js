@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 app.use('/', indexRouter);
 
-app.use('/userPackage', userRouter);
+app.use('/user', userRouter);
 app.use('/door', doorRouter);
 app.use('/log', logRouter);
 
