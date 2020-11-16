@@ -5,7 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 var indexRouter = require('./routes/index');
-
+const dotenv = require('dotenv');
+dotenv.config();
 
 var userRouter = require('./routes/user')
 var doorRouter = require('./routes/door')
@@ -14,6 +15,14 @@ var logRouter = require('./routes/log')
 var app = express();
 const db = require('./helper/db')();
 var server = require("http").createServer(app);
+
+//JWT
+const config = require("./config");
+app.set('api_secret_key', config.api_secret_key);
+
+//middleware - JWT
+const verifyToken = require("./middleware/auth");
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

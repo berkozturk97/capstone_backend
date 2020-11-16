@@ -1,22 +1,21 @@
-const jwt = require('jsonwebtoken');
-const UserPackage = require('../models/User')
+const jwt = require("jsonwebtoken");
 
-const auth = async (req, res, next) => {
-    try {
-        const token = req.header('Authorization').replace('Bearer ', '')
-        const decoded = jwt.verify(token, 'SmartLock')
-        const user = await UserPackage.findOne({ _id: decoded._id,
-        'token': token })
-
-        if(!user){
-            throw new Error()
+module.exports = (req, res, next) => {
+    let token = req.headers['x-access-token'] || req.headers['authorization'] || req.body.token || req.query.token;
+    if(!token){
+        res.json("Token a ulaşılamadı")
+    }else{
+        if (token.startsWith('Bearer ')) {
+            // Remove Bearer from string
+            token = token.slice(7, token.length);
         }
-        req.token = token
-        req.user = user
-        next()
-    } catch (error) {
-        res.status(401).send({error: 'Please authenticate'})
+        jwt.verify(token, req.app.get('api_secret_key'), (err, decoded) => {
+            if(err){
+                res.json("failed to authenticate token.")
+            }else{
+                req.decode = decoded;
+                next();
+            }
+        })
     }
-}
-
-module.exports = auth
+};

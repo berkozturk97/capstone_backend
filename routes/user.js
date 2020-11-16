@@ -1,35 +1,67 @@
 var express = require('express');
-const { db } = require('../models/User');
 const Log = require('../models/Log');
 var router = express.Router();
-
+const jwt = require("jsonwebtoken");
 const UserPackage = require('../models/User');
+const bcrypt = require("bcryptjs");
 
 router.post('/addUser', (req, res) => {
-    const { fullName, email, rfid, password, permissions } = req.body;
-    const user = new UserPackage({
-        fullName,
-        email,
-        rfid,
-        password,
-        permissions
-    })
-    user.save().then((data) => {
-        res.json(data)
-    }).catch((err) => {
-        res.json(err)
+    const { fullName, email, password, permissions } = req.body;
+    bcrypt.hash(password, 10).then((hash) => {
+        console.log(hash)
+        const user = new UserPackage({
+            fullName,
+            email,
+            password: hash,
+            permissions
+        })
+        user.save().then((data) => {
+            res.json(data)
+        }).catch((err) => {
+            res.json(err)
+        })
     })
 })
 
-router.post('/login', async (req, res) => {
-    try {
-        const user = await UserPackage.findByCredentials(req.body.email, req.body.password);
-        const token = await user.generateAuthToken();
-        res.send({ user, token });
-    } catch (error) {
-        res.status(400).send()
-    }
-})
+router.post('/login', async (req, res, next) => {
+
+    const { password, email } = req.body;
+
+    UserPackage.findOne({ email: email }).then((user) => {
+        console.log(user)
+        if (user) {
+            bcrypt.compare(password, user.password, (err, result) => {
+                if (result === true) {
+                    const payload = {
+                        _id: user._id
+                    };
+                    const userToken = jwt.sign(payload, process.env.JWT_KEY, {
+                        expiresIn: 720000 //  720 = 12 saat
+                        
+                    });
+                    console.log(userToken);
+                    UserPackage.findByIdAndUpdate(payload, { userToken }, (err, data) => {
+                        if (err) {
+                            res.send("token update edilmedi" + err)
+                        } else {
+                            res.json({
+                                userToken,
+                                user
+                            });
+                        }
+                    })
+                } else {
+                    res.json("Şifre Yanlış");
+                }
+            });
+        } else {
+            res.json("Mail Yanlış")
+        }
+    }).catch(() => {
+        res.json(null);
+    });
+
+});
 
 router.post('/hasPermisson', async (req, res) => {
     const { rfid, doorId } = req.body;
@@ -52,10 +84,7 @@ router.post('/hasPermisson', async (req, res) => {
 })
 router.get('/hasPermisson/:rfid/:doorId', async (req, res) => {
     const { rfid, doorId } = req.params;
-    console.log(rfid, doorId)
     const user = await UserPackage.find({ rfid: rfid });
-    console.log(user)
-
     if (user.length !== 0) {
         let isCanOpen = await user[0].permissions.includes(doorId);
         const log = new Log({
@@ -68,16 +97,11 @@ router.get('/hasPermisson/:rfid/:doorId', async (req, res) => {
             //res.send({ hasId })
             res.send(isCanOpen)
         }).catch((err) => {
-            console.log("error burda")
             res.json(err)
         });
-    }else{
+    } else {
         res.json(false);
-        console.log("false yetrine geldi")
     }
-
-
-
 })
 
 router.post('/getUsersByName', (req, res) => {
