@@ -27,7 +27,9 @@ router.post('/login', async (req, res, next) => {
 
 	const { password, email } = req.body;
 
-	UserPackage.findOne({ email: email }).then((user) => {
+	UserPackage.findOne({ email: email })
+	.populate('permissions')
+	.then((user) => {
 		console.log(user)
 		if (user) {
 			bcrypt.compare(password, user.password, (err, result) => {

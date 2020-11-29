@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Door = require('./Door');
 const Schema = mongoose.Schema;
 
 const UserPackageSchema = new Schema({
@@ -15,7 +16,7 @@ const UserPackageSchema = new Schema({
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
     permissions: {
-        type: Array,
+        type:  [{ type: Schema.ObjectId, ref: Door }],
         required: [true, '`{PATH}` alanı zorunludur.'],
     },
     userToken: {
