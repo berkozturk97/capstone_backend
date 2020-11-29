@@ -65,19 +65,17 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post('/hasPermisson', async (req, res) => {
-	const { rfid, doorId } = req.body;
-	const user = await UserPackage.find({ rfid: rfid }).select("_id permissions fullName email rfid");
-	let isCanOpen = await user[0].permissions.includes(doorId);
+	const { userId, doorId } = req.body;
+	const user = await UserPackage.find({ _id: userId }).select("_id permissions fullName email");
 
 	const log = new Log({
-		rfid: rfid,
 		doorId: doorId,
 		user: user[0],
-		isOpen: isCanOpen
+		isOpen: true
 	})
 	log.save().then((data) => {
 		//res.send({ hasId })
-		res.json(isCanOpen)
+		res.json(true)
 	}).catch((err) => {
 		res.json(err)
 	});

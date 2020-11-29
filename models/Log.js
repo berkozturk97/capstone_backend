@@ -3,10 +3,6 @@ const Door = require('./Door');
 const Schema = mongoose.Schema;
 
 const LogSchema = new Schema({
-    rfid: {
-        type: String,
-        required: [true, '`{PATH}` alanı zorunludur.'],
-    },
     doorId: {
         type: Schema.ObjectId,
         ref: Door
