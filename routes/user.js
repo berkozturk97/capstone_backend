@@ -22,7 +22,6 @@ router.post('/addUser', (req, res) => {
 		})
 	})
 })
-
 router.post('/login', async (req, res, next) => {
 
 	const { password, email } = req.body;
@@ -63,7 +62,6 @@ router.post('/login', async (req, res, next) => {
 	});
 
 });
-
 router.post('/hasPermisson', async (req, res) => {
 	const { userId, doorId } = req.body;
 	const user = await UserPackage.find({ _id: userId }).select("_id permissions fullName email");
@@ -102,7 +100,6 @@ router.get('/hasPermisson/:rfid/:doorId', async (req, res) => {
 		res.json(false);
 	}
 })
-
 router.post('/getUsersByName', (req, res) => {
 	const { fullName } = req.body;
 	Products.find({ name: { $options: 'i', $regex: fullName } }).then((data) => {
@@ -111,8 +108,6 @@ router.post('/getUsersByName', (req, res) => {
 		res.json(err)
 	})
 })
-
-
 router.get('/getUsers', (req, res) => {
 	UserPackage.find().then((data) => {
 		res.json(data);
@@ -120,14 +115,9 @@ router.get('/getUsers', (req, res) => {
 		res.json(err)
 	})
 })
-
-
-router.put('/updateUserInfo/:id', (req, res) => {
-	//
-	UserPackage.findByIdAndUpdate(req.body._id, {
+router.put('/updateUserPermission/:_id', (req, res) => {
+	UserPackage.findByIdAndUpdate(req.params._id, {
 		permissions: req.body.permissions,
-		fullName: req.body.fullName,
-		rfid: req.body.rfid
 	}, {
 		multi: true
 	}, (err, data) => {
